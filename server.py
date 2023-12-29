@@ -5,7 +5,7 @@
 
 '''
 # Import Flask, render_template, request from the flask pramework package
-from flask import Flas,render_template,request
+from flask import Flask,render_template,request
 
 # Import the sentiment_analyzer function from the package created
 from SentimentAnalysis.sentiment_analysis import sentiment_analyzer
@@ -22,25 +22,27 @@ def sent_analyzer():
     '''
 
     # getting the text from the mywebscript API
-    text_to_analyze = request.args.get("text_to_analyze")
+    texttoanalyze = request.args.get("textToAnalyze")
 
     # sending text to sentiment_analyzer
-    response_ans = sentiment_analyzer(text_to_analyze)
+    response_ans = sentiment_analyzer(texttoanalyze)
 
     # formating response
-    label = response_ans["label"].split("_")
+    label = response_ans["label"]
     score = response_ans["score"]
 
-    # Response
+    # different response if invalid input
+    if label == "none" and score == "none":
+        return "Invalid input ! Try again."
     return f"The given text has been identified as {label} with a score of {score}"
 
 @app.route("/")
 def render_index_page():
-    ''' This function initiates the rendering of the main application
+    ''' 
+        This function initiates the rendering of the main application
         page over the Flask channel
     '''
-    #TODO
+    return render_template("index.html")
 
 if __name__ == "__main__":
-    ''' This functions executes the flask app and deploys it on localhost:5000
-    '''#TODO
+    app.run(host="0.0.0.0",port=5000)

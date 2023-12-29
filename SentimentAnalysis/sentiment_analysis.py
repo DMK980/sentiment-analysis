@@ -25,12 +25,22 @@ def sentiment_analyzer(text_to_analyse):
     # calling the API using POST method
     response = requests.post(url,json = my_input, headers=header)
 
-    # formatting the text response into a dictonary
-    formatted_response = json.loads(response.text)
+    # dictionary to be returned
     obj_response = {
-                    "label":formatted_response["documentSentiment"]["label"],
-                    "score":formatted_response["documentSentiment"]["score"]
+                    "label":"none",
+                    "score":"none"
                     }
+
+    # error handling when invalid input
+    if response.status_code == 500:
+        # return none
+        return obj_response 
+
+    # when successfull    
+    elif response.status_code == 200:
+        formatted_response = json.loads(response.text)
+        obj_response["label"] = formatted_response["documentSentiment"]["label"].split("_")[1]
+        obj_response["score"] = formatted_response["documentSentiment"]["score"]
 
     # returns an object response.
     return obj_response
